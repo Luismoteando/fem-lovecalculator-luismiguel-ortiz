@@ -1,10 +1,12 @@
 package es.upm.miw.lovecalculator;
 
 import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +26,7 @@ public class ActividadPrincipal extends Activity {
     private TextView tvRespuesta;
     private EditText etFirstLover;
     private EditText etSecondLover;
+    private SeekBar sbPercentage;
 
     private LoveCalculatorRESTAPIService apiService;
 
@@ -34,6 +37,7 @@ public class ActividadPrincipal extends Activity {
         tvRespuesta = findViewById(R.id.tvRespuesta);
         etFirstLover = findViewById(R.id.etFirstLover);
         etSecondLover = findViewById(R.id.etSecondLover);
+        sbPercentage = findViewById(R.id.sbPercentage);
 
         // btb added for retrofit
         Retrofit retrofit = new Retrofit.Builder()
@@ -54,6 +58,10 @@ public class ActividadPrincipal extends Activity {
         String secondName = etSecondLover.getText().toString();
         Log.i(LOG_TAG, "getPercentage => fname=" + firstName + ", sname=" + secondName);
         tvRespuesta.setText("");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            sbPercentage.setProgress(0, true);
+            sbPercentage.setThumb(getDrawable(R.mipmap.ic_question_foreground));
+        }
 
         // Realiza la llamada por nombre
         Call<LoveCalculator> call_async = apiService.getPercentage(firstName, secondName);
@@ -67,11 +75,29 @@ public class ActividadPrincipal extends Activity {
                 LoveCalculator loveCalculator = response.body();
                 if (null != loveCalculator) {
                     tvRespuesta.append(loveCalculator.getFname()
-                            + " y " + loveCalculator.getSname()
-                            + " tienen " + loveCalculator.getPercentage()
-                            + "% de compatibilidad.\n\n");
+                            + " & " + loveCalculator.getSname()
+                            + " have \n" + loveCalculator.getPercentage()
+                            + "% of compatibility.\n"
+                            + loveCalculator.getResult() + "\n\n");
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        sbPercentage.setProgress(Integer.parseInt(loveCalculator.getPercentage()), true);
+                        int percentage = Integer.parseInt(loveCalculator.getPercentage());
+                        if (percentage >= 0 && percentage < 25) {
+                            sbPercentage.setThumb(getDrawable(R.mipmap.ic_broken_heart_foreground));
+                        } else if (percentage >= 25 && percentage < 50) {
+                            sbPercentage.setThumb(getDrawable(R.mipmap.ic_handshake_foreground));
+                        } else if (percentage >= 50 && percentage < 75) {
+                            sbPercentage.setThumb(getDrawable(R.mipmap.ic_heart_foreground));
+                        } else if (percentage >= 75 && percentage < 100) {
+                            sbPercentage.setThumb(getDrawable(R.mipmap.ic_wedding_foreground));
+                        }
+                    }
                     Log.i(LOG_TAG, "getPercentage => respuesta=" + loveCalculator);
                 } else {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        sbPercentage.setProgress(0, true);
+                        sbPercentage.setThumb(getDrawable(R.mipmap.ic_question_foreground));
+                    }
                     tvRespuesta.setText(getString(R.string.strError));
                     Log.i(LOG_TAG, getString(R.string.strError));
                 }

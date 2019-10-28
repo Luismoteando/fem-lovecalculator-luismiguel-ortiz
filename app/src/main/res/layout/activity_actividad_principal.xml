@@ -45,6 +45,14 @@
 
     </LinearLayout>
 
+    <SeekBar
+        android:id="@+id/sbPercentage"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:splitTrack="false"
+        android:thumb="@mipmap/ic_question_foreground" />
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -52,7 +60,9 @@
         <TextView
             android:id="@+id/tvRespuesta"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textAppearance="@android:style/TextAppearance.Material.Large" />
 
     </ScrollView>
 
