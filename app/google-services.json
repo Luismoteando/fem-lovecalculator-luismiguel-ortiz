@@ -1,0 +1,85 @@
+{
+  "project_info": {
+    "project_number": "104745682996",
+    "firebase_url": "https://fem-lovecalculator-luismiguel.firebaseio.com",
+    "project_id": "fem-lovecalculator-luismiguel",
+    "storage_bucket": "fem-lovecalculator-luismiguel.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:104745682996:android:946c1a8c3cd325d250e261",
+        "android_client_info": {
+          "package_name": "es.upm.miw.firebaselogin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "104745682996-fkqfun0q81nfb8400h2lk3cn5btaqaf4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "es.upm.miw.firebaselogin",
+            "certificate_hash": "7273af3c8fedc40aca2231481b2b352749e110f3"
+          }
+        },
+        {
+          "client_id": "104745682996-luh50v7cbkhkdfkb9not8na86bsvsg27.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZ3Ydo2VtpEs-YoHC---t_6j1t6BA6TS4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "104745682996-luh50v7cbkhkdfkb9not8na86bsvsg27.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:104745682996:android:a9e1678b909a3fcd50e261",
+        "android_client_info": {
+          "package_name": "es.upm.miw.lovecalculator"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "104745682996-fop0fd91e72aq5ftcp8petimhhsvmam2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "es.upm.miw.lovecalculator",
+            "certificate_hash": "7273af3c8fedc40aca2231481b2b352749e110f3"
+          }
+        },
+        {
+          "client_id": "104745682996-luh50v7cbkhkdfkb9not8na86bsvsg27.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZ3Ydo2VtpEs-YoHC---t_6j1t6BA6TS4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "104745682996-luh50v7cbkhkdfkb9not8na86bsvsg27.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

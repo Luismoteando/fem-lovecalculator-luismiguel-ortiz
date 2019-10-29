@@ -1,14 +1,25 @@
 package es.upm.miw.lovecalculator;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.firebase.ui.auth.AuthUI;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import java.util.Arrays;
 
 import es.upm.miw.lovecalculator.models.LoveCalculator;
 import retrofit2.Call;
@@ -22,13 +33,15 @@ public class ActividadPrincipal extends Activity {
     private static final String API_BASE_URL = "https://love-calculator.p.rapidapi.com";
 
     private static final String LOG_TAG = "MiW";
-
+    private static final int RC_SIGN_IN = 2018;
+    private LoveCalculatorRESTAPIService apiService;
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseAuth.AuthStateListener mAuthStateListener;
     private TextView tvRespuesta;
     private EditText etFirstLover;
     private EditText etSecondLover;
     private SeekBar sbPercentage;
 
-    private LoveCalculatorRESTAPIService apiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +59,54 @@ public class ActividadPrincipal extends Activity {
                 .build();
 
         apiService = retrofit.create(LoveCalculatorRESTAPIService.class);
+
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    // user is signed in
+                    CharSequence username = user.getDisplayName();
+                    Toast.makeText(ActividadPrincipal.this, getString(R.string.firebase_user_fmt, username), Toast.LENGTH_LONG).show();
+                    Log.i(LOG_TAG, "onAuthStateChanged() " + getString(R.string.firebase_user_fmt, username));
+                } else {
+                    // user is signed out
+                    startActivityForResult(
+                            // Get an instance of AuthUI based on the default app
+                            AuthUI.getInstance().
+                                    createSignInIntentBuilder().
+                                    setAvailableProviders(Arrays.asList(
+                                            new AuthUI.IdpConfig.GoogleBuilder().build(),
+                                            new AuthUI.IdpConfig.EmailBuilder().build()
+                                    )).
+                                    setIsSmartLockEnabled(!BuildConfig.DEBUG /* credentials */, true /* hints */).
+                                    build(),
+                            RC_SIGN_IN
+                    );
+                }
+            }
+        };
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.logout_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.logout:
+                mFirebaseAuth.signOut();
+                Log.i(LOG_TAG, getString(R.string.signed_out));
+                Toast.makeText(this, R.string.logout, Toast.LENGTH_SHORT).show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
 
@@ -103,7 +164,6 @@ public class ActividadPrincipal extends Activity {
                 }
             }
 
-
             @Override
             public void onFailure(Call<LoveCalculator> call, Throwable t) {
                 Toast.makeText(
@@ -114,15 +174,32 @@ public class ActividadPrincipal extends Activity {
                 Log.e(LOG_TAG, t.getMessage());
             }
         });
+    }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
+    }
 
-        // Síncrona... no aquí => NetworkOnMainThreadException
-//        Call<Country> call_sync = apiService.getCountryByName("spain");
-//        try {
-//            Country country = call_sync.execute().body();
-//            Log.i(LOG_TAG, "SYNC => " + country.toString());
-//        } catch (IOException e) {
-//            Log.e(LOG_TAG, e.getMessage());
-//        }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mFirebaseAuth.addAuthStateListener(mAuthStateListener);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RC_SIGN_IN) {
+            if (resultCode == RESULT_OK) {
+                Toast.makeText(this, R.string.signed_in, Toast.LENGTH_SHORT).show();
+                Log.i(LOG_TAG, "onActivityResult " + getString(R.string.signed_in));
+            } else if (resultCode == RESULT_CANCELED) {
+                Toast.makeText(this, R.string.signed_cancelled, Toast.LENGTH_SHORT).show();
+                Log.i(LOG_TAG, "onActivityResult " + getString(R.string.signed_cancelled));
+                finish();
+            }
+        }
     }
 }

@@ -3,4 +3,9 @@
     <string name="strError">No results have been recovered.</string>
     <string name="btnDescripcion">Love button</string>
     <string name="btnLove">❤️</string>
+    <string name="firebase_user_fmt">Firebase User: %s</string>
+    <string name="signed_in">Signed in!</string>
+    <string name="signed_cancelled">Signed in cancelled</string>
+    <string name="signed_out">Signed out!</string>
+    <string name="logout">Logout</string>
 </resources>
