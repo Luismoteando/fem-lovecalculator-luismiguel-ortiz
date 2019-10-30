@@ -18,6 +18,9 @@ import android.widget.Toast;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Arrays;
 
@@ -36,8 +39,14 @@ public class ActividadPrincipal extends Activity {
     private static final int RC_SIGN_IN = 2018;
 
     private LoveCalculatorRESTAPIService apiService;
+
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
+
+    private FirebaseDatabase mFirebaseDatabase;
+    private DatabaseReference mLoveCalculatorDatabaseReference;
+    private ChildEventListener mChildEventListener;
+
     private int percentage;
 
     private TextView tvRespuesta;
@@ -61,6 +70,12 @@ public class ActividadPrincipal extends Activity {
                 .build();
 
         apiService = retrofit.create(LoveCalculatorRESTAPIService.class);
+
+        // btb Get instance of Firebase database
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        mFirebaseAuth = FirebaseAuth.getInstance();
+
+        mLoveCalculatorDatabaseReference = mFirebaseDatabase.getReference().child("lovecalculator");
 
         mFirebaseAuth = FirebaseAuth.getInstance();
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
@@ -118,7 +133,6 @@ public class ActividadPrincipal extends Activity {
         }
     }
 
-
     //
     // A este método se llama cada vez que se hace click sobre el corazón
     // Ver  activity_actividad_principal.xml
@@ -162,6 +176,7 @@ public class ActividadPrincipal extends Activity {
                         }
                     }
                     Log.i(LOG_TAG, "getPercentage => respuesta=" + loveCalculator);
+                    mLoveCalculatorDatabaseReference.push().setValue(loveCalculator);
                 } else {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                         sbPercentage.setProgress(0, true);
