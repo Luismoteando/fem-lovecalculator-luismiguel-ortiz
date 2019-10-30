@@ -18,7 +18,6 @@ import android.widget.Toast;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -45,7 +44,6 @@ public class ActividadPrincipal extends Activity {
 
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mLoveCalculatorDatabaseReference;
-    private ChildEventListener mChildEventListener;
 
     private int percentage;
 
@@ -116,6 +114,11 @@ public class ActividadPrincipal extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.loveHistoric:
+                startActivity(new Intent(this, ActividadLoveHistoric.class));
+                Log.i(LOG_TAG, getString(R.string.loveHistoric));
+                Toast.makeText(this, R.string.loveHistoric, Toast.LENGTH_SHORT).show();
+                return true;
             case R.id.sendReport:
                 Intent intent = new Intent(this, LoveAlertActivity.class);
                 intent.putExtra("percentage", percentage);

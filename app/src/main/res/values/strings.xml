@@ -10,4 +10,5 @@
     <string name="log_out">Logout</string>
     <string name="send_report">Send report</string>
     <string name="report_sent">Report sent!</string>
+    <string name="loveHistoric">Love historic</string>
 </resources>
