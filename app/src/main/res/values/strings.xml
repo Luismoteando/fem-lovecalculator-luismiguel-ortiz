@@ -7,5 +7,7 @@
     <string name="signed_in">Signed in!</string>
     <string name="signed_cancelled">Signed in cancelled</string>
     <string name="signed_out">Signed out!</string>
-    <string name="logout">Logout</string>
+    <string name="log_out">Logout</string>
+    <string name="send_report">Send report</string>
+    <string name="report_sent">Report sent!</string>
 </resources>

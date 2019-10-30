@@ -22,6 +22,7 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.Arrays;
 
 import es.upm.miw.lovecalculator.models.LoveCalculator;
+import es.upm.miw.lovereporter.LoveAlertActivity;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -31,17 +32,18 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ActividadPrincipal extends Activity {
 
     private static final String API_BASE_URL = "https://love-calculator.p.rapidapi.com";
-
     private static final String LOG_TAG = "MiW";
     private static final int RC_SIGN_IN = 2018;
+
     private LoveCalculatorRESTAPIService apiService;
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
+    private int percentage;
+
     private TextView tvRespuesta;
     private EditText etFirstLover;
     private EditText etSecondLover;
     private SeekBar sbPercentage;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,10 +101,17 @@ public class ActividadPrincipal extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.sendReport:
+                Intent intent = new Intent(this, LoveAlertActivity.class);
+                intent.putExtra("percentage", percentage);
+                startService(intent);
+                Log.i(LOG_TAG, getString(R.string.report_sent));
+                Toast.makeText(this, R.string.report_sent, Toast.LENGTH_SHORT).show();
+                return true;
             case R.id.logout:
                 mFirebaseAuth.signOut();
                 Log.i(LOG_TAG, getString(R.string.signed_out));
-                Toast.makeText(this, R.string.logout, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.signed_out, Toast.LENGTH_SHORT).show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -130,19 +139,18 @@ public class ActividadPrincipal extends Activity {
         // Asíncrona
         call_async.enqueue(new Callback<LoveCalculator>() {
 
-
             @Override
             public void onResponse(Call<LoveCalculator> call, Response<LoveCalculator> response) {
                 LoveCalculator loveCalculator = response.body();
                 if (null != loveCalculator) {
+                    percentage = Integer.parseInt(loveCalculator.getPercentage());
                     tvRespuesta.append(loveCalculator.getFname()
                             + " & " + loveCalculator.getSname()
                             + " have \n" + loveCalculator.getPercentage()
                             + "% of compatibility.\n"
                             + loveCalculator.getResult() + "\n\n");
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        sbPercentage.setProgress(Integer.parseInt(loveCalculator.getPercentage()), true);
-                        int percentage = Integer.parseInt(loveCalculator.getPercentage());
+                        sbPercentage.setProgress(percentage, true);
                         if (percentage >= 0 && percentage < 25) {
                             sbPercentage.setThumb(getDrawable(R.mipmap.ic_broken_heart_foreground));
                         } else if (percentage >= 25 && percentage < 50) {
